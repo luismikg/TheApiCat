@@ -1,6 +1,8 @@
 package com.bbb.thecatapi.ui.home.tabs.online
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,9 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -33,13 +34,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import app.cash.paging.compose.LazyPagingItems
+import app.cash.paging.compose.collectAsLazyPagingItems
+import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
-import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.bbb.thecatapi.core.composableLibrary.LoadingScreen
 import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.getColorTheme
+import kotlinproject.composeapp.generated.resources.Res
+import kotlinproject.composeapp.generated.resources.blackCat
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -48,39 +54,47 @@ fun OnlineScreen(
 ) {
     val viewModel = koinViewModel<OnlineViewModel>()
     val state by viewModel.state.collectAsState()
-    val list = state.breedsModel ?: emptyList()
-    showDarkBackground(state.isLoading)
+    val list = state.breedsModel.collectAsLazyPagingItems()
 
+    BreedsGrid(list = list, showDarkBackground = showDarkBackground)
+}
 
-    if (list.isEmpty() && state.isLoading.not()) {
-        /*Column(
-            modifier = Modifier.fillMaxSize().padding(top = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = stringResource(Res.string.no_loans),
-                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
-                color = colors.textColor
-            )
-            Image(
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Crop,
-                painter = painterResource(Res.drawable.empty_state_icon),
-                contentDescription = ""
-            )
-        }*/
-    } else {
-        val listState = rememberLazyListState()
+@Composable
+private fun BreedsGrid(list: LazyPagingItems<BreedsModel>, showDarkBackground: (Boolean) -> Unit) {
 
-        LazyColumn(
-            modifier = Modifier.padding(top = 30.dp, start = 4.dp, end = 4.dp),
-            state = listState
-        ) {
-            item { Spacer(modifier = Modifier.size(20.dp)) }
-            items(list) { item ->
-                ImageItem(item = item) { /*onClickItem(item)*/ }
-                Spacer(modifier = Modifier.size(20.dp))
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        columns = GridCells.Fixed(1),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        showDarkBackground(false)
+        when {
+            list.loadState.refresh is LoadState.Loading && list.itemCount == 0 -> {
+                //initial loading
+                showDarkBackground(true)
+            }
+
+            list.loadState.refresh is LoadState.NotLoading && list.itemCount == 0 -> {
+                item {
+                    Text("No items")
+                }
+            }
+
+            else -> {
+                item {
+                    Spacer(modifier = Modifier.size(28.dp))
+                }
+                items(list.itemCount) { position ->
+                    list[position]?.let { breedsModel ->
+                        ImageItem(item = breedsModel, onClickItem = {})
+                    }
+                }
+
+                if (list.loadState.append is LoadState.Loading) {
+                    //Loading more items
+                    showDarkBackground(true)
+                }
             }
         }
     }
@@ -97,24 +111,34 @@ private fun ImageItem(item: BreedsModel, onClickItem: (BreedsModel) -> Unit) {
         Box(contentAlignment = Alignment.BottomStart) {
             Box(Modifier.fillMaxSize().background(colors.backgroundColor.copy(alpha = 0.5f)))
 
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current)
-                    .data(item.image.url)
-                    .crossfade(true)
-                    .listener(
-                        onError = { request, result ->
-                            println("Error loading image: ${result.throwable}")
-                        },
-                        onSuccess = { request, result ->
-                            println("Loaded image successfully")
-                        }
-                    )
-                    .build(),
-                loading = { LoadingScreen() },
-                contentDescription = item.name,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            if (item.image.url.isEmpty()) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(Res.drawable.blackCat),
+                    alpha = 0.08f,
+                    contentScale = ContentScale.Fit,
+                    contentDescription = "",
+                )
+            } else {
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(item.image.url)
+                        .crossfade(true)
+                        .listener(
+                            onError = { request, result ->
+                                println("Error loading image: ${result.throwable}")
+                            },
+                            onSuccess = { request, result ->
+                                println("Loaded image successfully")
+                            }
+                        )
+                        .build(),
+                    placeholder = painterResource(Res.drawable.blackCat),
+                    contentDescription = item.name,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             Box(
                 Modifier.fillMaxSize().background(

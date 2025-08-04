@@ -2,6 +2,7 @@ package com.bbb.thecatapi.di
 
 import com.bbb.thecatapi.data.RepositoryCatsImpl
 import com.bbb.thecatapi.data.remote.ApiService
+import com.bbb.thecatapi.data.remote.paging.BreedsPagingSource
 import com.bbb.thecatapi.domain.RepositoryCats
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.DefaultRequest
@@ -34,5 +35,6 @@ val dataModule = module {
 
     //factory<ApiService>{ ApiService(get()) }
     factoryOf(::ApiService)
-    factory<RepositoryCats> { RepositoryCatsImpl(get()) }
+    factory<RepositoryCats> { RepositoryCatsImpl(get(), get()) }
+    factoryOf(::BreedsPagingSource)
 }

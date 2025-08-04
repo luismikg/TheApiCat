@@ -70,6 +70,10 @@ kotlin {
             //Coil load images from network
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+
+            //Pager
+            implementation(libs.paging.compose.common)
+            implementation(libs.paging.common)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
