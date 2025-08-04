@@ -1,4 +1,4 @@
-package com.fac23.kmp
+package com.bbb.thecatapi
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

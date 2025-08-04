@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -37,10 +38,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
+import com.bbb.thecatapi.core.composableLibrary.LoadingScreen
+import com.bbb.thecatapi.getColorTheme
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigationBar
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigationItem
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.NavigationBottom
-import com.fac23.kmp.getColorTheme
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
@@ -56,34 +58,57 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
     var currentRoute by remember { mutableStateOf(bottomNavigationItem[0].route) }
     val navController = rememberNavController()
 
-    Scaffold(
-        topBar = {
-            CustomTopBar(currentRoute, onClickExit = onClickExit)
-        },
-        bottomBar = {
-            BottomNavigationBar(
-                bottomNavigationItem = bottomNavigationItem,
-                navController = navController,
-                currentScreen = { route ->
-                    currentRoute = route
-                }
-            )
-        }
-    ) {
-        Box(modifier = Modifier.padding(it)) {
-            NavigationBottom(
-                navigator = navController,
-                /*listSavingMoney = state.listSavingMoney,
-                listLoan = state.listLoan,
-                listState = listState,
-                onClickItemLoan = { financialLoanModelUI ->
-                    viewModel.saveLoanSelected(financialLoanModelUI)
-                }*/
-            )
+    var showDarkBackground by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                CustomTopBar(currentRoute, onClickExit = onClickExit)
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    bottomNavigationItem = bottomNavigationItem,
+                    navController = navController,
+                    currentScreen = { route ->
+                        currentRoute = route
+                    }
+                )
+            }
+        ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+
+
+                NavigationBottom(
+                    navigator = navController,
+                    showDarkBackground = { isShow: Boolean ->
+                        showDarkBackground = isShow
+                    }
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.White,
+                                    Color.White,
+                                    Color.White,
+                                    Color.White.copy(alpha = 0f)
+                                )
+                            )
+                        )
+                        .align(Alignment.TopCenter)
+                )
+            }
         }
     }
-}
 
+    if (showDarkBackground) {
+        LoadingScreen()
+    }
+}
 
 @Composable
 private fun CustomTopBar(currentRoute: String, onClickExit: () -> Unit) {
@@ -95,7 +120,7 @@ private fun CustomTopBar(currentRoute: String, onClickExit: () -> Unit) {
         instruction = "Favoritos"
     }
 
-    Column(modifier = Modifier.background(colors.backgroundMainColor)) {
+    Column(modifier = Modifier.background(colors.backgroundMainColor).padding(top = 30.dp)) {
 
         Row(modifier = Modifier.padding(start = 20.dp, top = 8.dp)) {
             Text(

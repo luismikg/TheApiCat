@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.fac23.kmp.getColorTheme
+import com.bbb.thecatapi.getColorTheme
 
 @Composable
 fun BottomNavigationBar(

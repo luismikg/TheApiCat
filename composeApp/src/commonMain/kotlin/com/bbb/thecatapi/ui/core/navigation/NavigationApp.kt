@@ -22,7 +22,8 @@ fun NavigationApp() {
 
         composable(route = Routes.HomeScreen.route) {
             HomeScreen(
-                onClickExit = {}, onNextScreen = {}
+                onClickExit = { mainController.navigateUp() },
+                onNextScreen = {}
             )
         }
     }

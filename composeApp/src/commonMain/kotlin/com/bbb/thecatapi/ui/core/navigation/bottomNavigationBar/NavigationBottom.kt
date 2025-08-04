@@ -10,21 +10,15 @@ import com.bbb.thecatapi.ui.home.tabs.online.OnlineScreen
 @Composable
 fun NavigationBottom(
     navigator: NavHostController,
-    /*listState: LazyListState,
-    onClickItemLoan: (FinancialLoanModelUI) -> Unit,
-    listSavingMoney: List<FinancialSavingMoneyModelUI> = emptyList(),
-    listLoan: List<FinancialLoanModelUI> = emptyList()*/
+    showDarkBackground: (Boolean) -> Unit,
 ) {
 
     NavHost(navController = navigator, startDestination = BottomNavigationItem.Online.route) {
         composable(route = BottomNavigationItem.Online.route) {
-            /*LoanScreen(listLoan, listState = listState) { itemLoan ->
-                onClickItemLoan(itemLoan)
-            }*/
-            OnlineScreen()
+
+            OnlineScreen(showDarkBackground = showDarkBackground)
         }
         composable(route = BottomNavigationItem.Favorite.route) {
-            //SavingMoneyScreen(listSavingMoney)
             FavoritesScreen()
         }
     }

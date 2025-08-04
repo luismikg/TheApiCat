@@ -26,7 +26,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fac23.kmp.getColorTheme
+import com.bbb.thecatapi.getColorTheme
 
 @Composable
 fun PasswordTextField(
@@ -59,8 +59,8 @@ fun PasswordTextField(
             IconButton(onClick = { passwordVisible = passwordVisible.not() }) {
                 Icon(
                     imageVector =
-                    if (passwordVisible) Icons.Default.Visibility
-                    else Icons.Default.VisibilityOff,
+                        if (passwordVisible) Icons.Default.Visibility
+                        else Icons.Default.VisibilityOff,
                     tint = colors.primary,
                     contentDescription = ""
                 )

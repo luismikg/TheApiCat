@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bbb.thecatapi.core.composableLibrary.EmailTextField
 import com.bbb.thecatapi.core.composableLibrary.PasswordTextField
-import com.fac23.kmp.getColorTheme
+import com.bbb.thecatapi.getColorTheme
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
