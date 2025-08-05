@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.rememberNavController
 import com.bbb.thecatapi.core.composableLibrary.LoadingScreen
 import com.bbb.thecatapi.getColorTheme
+import com.bbb.thecatapi.isAndroid
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigationBar
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigationItem
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.NavigationBottom
@@ -160,14 +161,22 @@ private fun CustomHeaderCard(currentRoute: String, onClickExit: () -> Unit) {
         animationSpec = tween(250)
     )
 
-    Card(
-        modifier = Modifier.padding(start = 45.dp, end = 45.dp, top = 8.dp, bottom = 8.dp)
+    val modifier = if (isAndroid()) {
+        Modifier.padding(start = 45.dp, end = 45.dp, top = 8.dp, bottom = 8.dp)
             .height(180.dp)
             .background(colors.backgroundMainColor)
             .graphicsLayer {
                 rotationY = rotate
                 cameraDistance = 8 * density
-            },
+            }
+    } else {
+        Modifier.padding(start = 45.dp, end = 45.dp, top = 8.dp, bottom = 8.dp)
+            .height(180.dp)
+            .background(colors.backgroundMainColor)
+    }
+
+    Card(
+        modifier = modifier,
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
@@ -232,7 +241,13 @@ private fun HeaderFrondCard(onClickExit: () -> Unit) {
 @Composable
 private fun BackCard(onClickExit: () -> Unit) {
 
-    Box(modifier = Modifier.fillMaxSize().graphicsLayer { rotationY = 180f }) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                rotationY = if (isAndroid()) 180f else 0f
+            }
+    ) {
 
         Image(//image background
             modifier = Modifier.fillMaxSize().alpha(0.3f),

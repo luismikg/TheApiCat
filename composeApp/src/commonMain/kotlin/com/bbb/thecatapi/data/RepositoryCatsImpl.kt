@@ -16,8 +16,8 @@ class RepositoryCatsImpl(
 ) : RepositoryCats {
 
     companion object {
-        const val MAX_ITEMS_PAGER = 3
-        const val PREFETCH_DISTANCE = 1
+        const val MAX_ITEMS_PAGER = 10
+        const val PREFETCH_DISTANCE = 8
     }
 
     override suspend fun getBreeds(): List<BreedsModel> {
