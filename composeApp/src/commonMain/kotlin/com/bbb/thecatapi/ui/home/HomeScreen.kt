@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -44,7 +45,8 @@ import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigation
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.BottomNavigationItem
 import com.bbb.thecatapi.ui.core.navigation.bottomNavigationBar.NavigationBottom
 import kotlinproject.composeapp.generated.resources.Res
-import kotlinproject.composeapp.generated.resources.compose_multiplatform
+import kotlinproject.composeapp.generated.resources.blackCat
+import kotlinproject.composeapp.generated.resources.catPattern
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -144,12 +146,12 @@ private fun CustomTopBar(currentRoute: String, onClickExit: () -> Unit) {
                 )
             )
         }
-        PersonalCard(currentRoute = currentRoute, onClickExit = onClickExit)
+        CustomHeaderCard(currentRoute = currentRoute, onClickExit = onClickExit)
     }
 }
 
 @Composable
-private fun PersonalCard(currentRoute: String, onClickExit: () -> Unit) {
+private fun CustomHeaderCard(currentRoute: String, onClickExit: () -> Unit) {
 
     val colors = getColorTheme()
     var rotated by remember { mutableStateOf(false) }
@@ -184,9 +186,9 @@ private fun FrondCard(onClickExit: () -> Unit) {
     Box {
 
         Image(//image background
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().alpha(0.3f),
             contentScale = ContentScale.Crop,
-            painter = painterResource(Res.drawable.compose_multiplatform),
+            painter = painterResource(Res.drawable.catPattern),
             contentDescription = ""
         )
 
@@ -211,7 +213,7 @@ private fun HeaderFrondCard(onClickExit: () -> Unit) {
 
         Image(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-            painter = painterResource(Res.drawable.compose_multiplatform),
+            painter = painterResource(Res.drawable.blackCat),
             contentDescription = "",
         )
 
@@ -233,9 +235,9 @@ private fun BackCard(onClickExit: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize().graphicsLayer { rotationY = 180f }) {
 
         Image(//image background
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().alpha(0.3f),
             contentScale = ContentScale.Crop,
-            painter = painterResource(Res.drawable.compose_multiplatform),
+            painter = painterResource(Res.drawable.catPattern),
             contentDescription = ""
         )
 

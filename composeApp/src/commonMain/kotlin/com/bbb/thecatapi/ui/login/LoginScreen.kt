@@ -18,10 +18,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -34,8 +32,10 @@ import com.bbb.thecatapi.core.composableLibrary.EmailTextField
 import com.bbb.thecatapi.core.composableLibrary.PasswordTextField
 import com.bbb.thecatapi.getColorTheme
 import kotlinproject.composeapp.generated.resources.Res
-import kotlinproject.composeapp.generated.resources.compose_multiplatform
+import kotlinproject.composeapp.generated.resources.catBreak
+import kotlinproject.composeapp.generated.resources.catPattern
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreen(
@@ -69,8 +69,8 @@ private fun Header(modifier: Modifier = Modifier) {
 
     Box(modifier = modifier) {
         Image(
-            painter = painterResource(Res.drawable.compose_multiplatform),
-            alpha = 0.1f,
+            painter = painterResource(Res.drawable.catPattern),
+            alpha = 1f,
             contentScale = ContentScale.None,
             contentDescription = "",
         )
@@ -81,7 +81,7 @@ private fun Header(modifier: Modifier = Modifier) {
         ) {
 
             Image(
-                painter = painterResource(Res.drawable.compose_multiplatform),
+                painter = painterResource(Res.drawable.catBreak),
                 modifier = Modifier.size(300.dp),
                 contentDescription = ""
             )
@@ -132,17 +132,31 @@ private fun BodyHeader() {
 @Composable
 private fun BodyMain() {
 
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+    val viewModel = koinViewModel<LoginViewModel>()
 
-        var user by remember { mutableStateOf("") }
-        var pass by remember { mutableStateOf("") }
-        EmailTextField(initEmail = user) { email ->
-            user = email
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+        EmailTextField(initEmail = viewModel.user.value) { email ->
+            viewModel.user.value = email.lowercase().trim()
+            viewModel.isEnableContinueButton()
         }
         Spacer(Modifier.height(16.dp))
-        PasswordTextField(initPassword = pass) { password ->
-            pass = password
+        PasswordTextField(initPassword = viewModel.password.value) { password ->
+            viewModel.password.value = password
+            viewModel.isEnableContinueButton()
         }
+        Spacer(Modifier.height(10.dp))
+
+        val textStyle = TextStyle(
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Light,
+            lineHeight = 12.sp
+        )
+        Text(
+            text = "• Al menos una minúscula + una mayúscula + un número + un símbolo.",
+            style = textStyle
+        )
+        Text(text = "• Longitud mínima de 8 caracteres.", style = textStyle)
+
     }
 }
 
@@ -154,11 +168,13 @@ private fun BodyFooter(
 ) {
 
     val colors = getColorTheme()
+    val viewModel = koinViewModel<LoginViewModel>()
+    val state by viewModel.state.collectAsState()
 
     Column(modifier = Modifier.background(colors.backgroundColor)) {
         Button(
             modifier = Modifier.fillMaxWidth().height(60.dp),
-            enabled = true,
+            enabled = state.isEnableContinue,
             colors = ButtonDefaults.buttonColors(
                 containerColor = colors.backgroundColor,
                 contentColor = colors.textMainColor //Active

@@ -21,10 +21,10 @@ class OnlineViewModel(private val getCatBreedsPagingUseCase: GetCatBreedsPagingU
         getCatBreedsPaging()
     }
 
-    fun getCatBreedsPaging(){
+    fun getCatBreedsPaging() {
         viewModelScope.launch {
-            _state.update { state ->
-                state.copy(
+            _state.update { s ->
+                s.copy(
                     breedsModel = getCatBreedsPagingUseCase.invoke()
                 )
             }

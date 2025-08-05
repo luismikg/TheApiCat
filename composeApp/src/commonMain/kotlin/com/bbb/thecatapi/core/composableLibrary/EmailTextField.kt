@@ -39,10 +39,13 @@ fun EmailTextField(
         value = textUser,
         shape = RoundedCornerShape(12.dp),
         onValueChange = { newValue ->
-            var valueFiltered = newValue.filter { !it.isWhitespace() }
-            valueFiltered = valueFiltered.lowercase()
-            textUser = valueFiltered
-            onTextChange(textUser)
+            val allowedCharacters = "abcdefghijklmnopqrstuvwxyz0123456789@._-+"
+            val filtered = newValue
+                .filter { it.lowercaseChar() in allowedCharacters } // Solo caracteres válidos
+                .lowercase()
+                .trim()
+            textUser = filtered
+            onTextChange(filtered)
         },
         label = { Text("Correo electrónico", fontWeight = FontWeight.SemiBold) },
         modifier = Modifier.fillMaxWidth(),
