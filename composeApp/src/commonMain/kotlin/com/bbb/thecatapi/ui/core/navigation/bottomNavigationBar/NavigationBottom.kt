@@ -10,13 +10,17 @@ import com.bbb.thecatapi.ui.home.tabs.online.OnlineScreen
 @Composable
 fun NavigationBottom(
     navigator: NavHostController,
+    showDarkBackgroundLoading: (Boolean) -> Unit,
     showDarkBackground: (Boolean) -> Unit,
 ) {
 
     NavHost(navController = navigator, startDestination = BottomNavigationItem.Online.route) {
         composable(route = BottomNavigationItem.Online.route) {
 
-            OnlineScreen(showDarkBackground = showDarkBackground)
+            OnlineScreen(
+                showDarkBackgroundLoading = showDarkBackgroundLoading,
+                showDarkBackground = showDarkBackground
+            )
         }
         composable(route = BottomNavigationItem.Favorite.route) {
             FavoritesScreen()

@@ -14,6 +14,14 @@ class OnlineViewModel(private val getCatBreedsPagingUseCase: GetCatBreedsPagingU
     val state: StateFlow<OnlineState> = _state
 
     init {
+        getCatBreedsPaging()
+    }
+
+    fun refresh() {
+        getCatBreedsPaging()
+    }
+
+    fun getCatBreedsPaging(){
         viewModelScope.launch {
             _state.update { state ->
                 state.copy(

@@ -58,6 +58,7 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
     var currentRoute by remember { mutableStateOf(bottomNavigationItem[0].route) }
     val navController = rememberNavController()
 
+    var showDarkBackgroundLoading by remember { mutableStateOf(false) }
     var showDarkBackground by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -80,9 +81,12 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
 
                 NavigationBottom(
                     navigator = navController,
+                    showDarkBackgroundLoading = { isShow: Boolean ->
+                        showDarkBackgroundLoading = isShow
+                    },
                     showDarkBackground = { isShow: Boolean ->
                         showDarkBackground = isShow
-                    }
+                    },
                 )
 
                 Box(
@@ -105,8 +109,8 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
         }
     }
 
-    if (showDarkBackground) {
-        LoadingScreen()
+    if (showDarkBackgroundLoading || showDarkBackground) {
+        LoadingScreen(showLoading = showDarkBackground.not())
     }
 }
 

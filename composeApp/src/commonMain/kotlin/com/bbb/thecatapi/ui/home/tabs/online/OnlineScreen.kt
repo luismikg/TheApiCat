@@ -1,5 +1,6 @@
 package com.bbb.thecatapi.ui.home.tabs.online
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,25 +14,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
@@ -45,34 +58,69 @@ import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.getColorTheme
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.blackCat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun OnlineScreen(
+    showDarkBackgroundLoading: (Boolean) -> Unit,
     showDarkBackground: (Boolean) -> Unit
 ) {
     val viewModel = koinViewModel<OnlineViewModel>()
     val state by viewModel.state.collectAsState()
     val list = state.breedsModel.collectAsLazyPagingItems()
 
-    BreedsGrid(list = list, showDarkBackground = showDarkBackground)
+    var isRefreshing by remember { mutableStateOf(false) }
+    var userScrollEnabled by remember { mutableStateOf(true) }
+
+    PullRefreshList(
+        isRefreshing = isRefreshing,
+        onRefresh = {
+            isRefreshing = true
+            userScrollEnabled = isRefreshing.not()
+            showDarkBackground(true)
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(2000)
+                viewModel.refresh()
+                isRefreshing = false
+                userScrollEnabled = isRefreshing.not()
+                showDarkBackground(false)
+            }
+        }
+    ) { lazyGridState ->
+        BreedsGrid(
+            list = list,
+            showDarkBackgroundLoading = showDarkBackgroundLoading,
+            lazyGridState = lazyGridState,
+            userScrollEnabled = userScrollEnabled
+        )
+    }
 }
 
 @Composable
-private fun BreedsGrid(list: LazyPagingItems<BreedsModel>, showDarkBackground: (Boolean) -> Unit) {
-
+private fun BreedsGrid(
+    list: LazyPagingItems<BreedsModel>,
+    showDarkBackgroundLoading: (Boolean) -> Unit,
+    lazyGridState: LazyGridState,
+    userScrollEnabled: Boolean
+) {
     LazyVerticalGrid(
+        state = lazyGridState,
+        userScrollEnabled = userScrollEnabled,
         modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
         columns = GridCells.Fixed(1),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        showDarkBackground(false)
+        showDarkBackgroundLoading(false)
         when {
             list.loadState.refresh is LoadState.Loading && list.itemCount == 0 -> {
                 //initial loading
-                showDarkBackground(true)
+                showDarkBackgroundLoading(true)
             }
 
             list.loadState.refresh is LoadState.NotLoading && list.itemCount == 0 -> {
@@ -93,7 +141,7 @@ private fun BreedsGrid(list: LazyPagingItems<BreedsModel>, showDarkBackground: (
 
                 if (list.loadState.append is LoadState.Loading) {
                     //Loading more items
-                    showDarkBackground(true)
+                    showDarkBackgroundLoading(true)
                 }
             }
         }
@@ -185,5 +233,62 @@ private fun ImageItem(item: BreedsModel, onClickItem: (BreedsModel) -> Unit) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun PullRefreshList(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (LazyGridState) -> Unit
+) {
+    val lazyGridState = rememberLazyGridState()
+
+    // Detectar si estamos completamente arriba
+    val isAtTop by remember {
+        derivedStateOf {
+            lazyGridState.firstVisibleItemIndex == 0 &&
+                    lazyGridState.firstVisibleItemScrollOffset == 0
+        }
+    }
+
+    var overscrollOffset by remember { mutableStateOf(0f) }
+    val threshold = 120f
+
+    val nestedScrollConnection = remember(isAtTop, isRefreshing) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (isAtTop && available.y > 0) {
+                    overscrollOffset += available.y
+                    return Offset(0f, available.y)
+                }
+                return Offset.Zero
+            }
+
+            override suspend fun onPreFling(available: Velocity): Velocity {
+                if (overscrollOffset > threshold && isAtTop && !isRefreshing) {
+                    onRefresh()
+                }
+                overscrollOffset = 0f
+                return Velocity.Zero
+            }
+        }
+    }
+
+    Column(modifier = modifier.nestedScroll(nestedScrollConnection)) {
+        AnimatedVisibility(visible = overscrollOffset > 10 || isRefreshing) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 50.dp)
+                    .height(60.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        content(lazyGridState)
     }
 }
