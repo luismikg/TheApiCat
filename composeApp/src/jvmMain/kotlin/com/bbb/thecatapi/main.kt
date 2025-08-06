@@ -12,6 +12,7 @@ fun main() = application {
         title = "Gatitos",
     ) {
 
+        val apiKey = BuildKonfig.THE_CAT_API_KEY
         val window = this.window
         LaunchedEffect(window) {
             val minWidthPx = 400
@@ -19,7 +20,7 @@ fun main() = application {
             window.minimumSize = Dimension(minWidthPx, minHeightPx)
         }
 
-        initKoin()
+        initKoin(apiKey = apiKey)
         App()
     }
 }

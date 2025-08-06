@@ -11,9 +11,13 @@ class CatApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initKoin {
-            androidLogger(Level.INFO)
-            androidContext(this@CatApp)
-        }
+        val apiKey = BuildKonfig.THE_CAT_API_KEY
+        initKoin(
+            apiKey = apiKey,
+            configuration = {
+                androidLogger(Level.INFO)
+                androidContext(this@CatApp)
+            }
+        )
     }
 }

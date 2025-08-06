@@ -1,6 +1,9 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -10,6 +13,7 @@ plugins {
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.sql.delight)
+    id("com.codingfeline.buildkonfig") version "0.17.1"
 }
 
 kotlin {
@@ -27,7 +31,8 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
-            isStatic = true
+            //isStatic = true
+            linkerOpts("-lsqlite3")
         }
     }
 
@@ -153,5 +158,36 @@ sqldelight {
         create("Database") {
             packageName.set("com.bbb.data.database")
         }
+    }
+}
+
+// see: https://medium.com/@uwaisalqadri/manage-project-environment-in-kotlin-multiplatform-mobile-528847c3bfc5
+//Getting the variable of api_key from local.properties:
+// the_cat_api_key = live_...
+val localProperties = Properties()
+val localPropertiesFile = project.rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    FileInputStream(localPropertiesFile).use { input ->
+        localProperties.load(input)
+    }
+}
+
+val apiKey = localProperties.getProperty("the_cat_api_key") ?: "NO_API_KEY_FOUND"
+
+buildkonfig {
+    packageName = "com.bbb.thecatapi"
+
+    defaultConfigs {
+        buildConfigField(
+            type = FieldSpec.Type.STRING,
+            name = "THE_CAT_API_KEY",
+            value = apiKey
+        )
+    }
+
+    targetConfigs {
+        create("androidMain") {}
+        create("jvmMain") {}
+        create("iosMain") {}
     }
 }

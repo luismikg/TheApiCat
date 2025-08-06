@@ -17,7 +17,7 @@ import kotlinx.serialization.json.Json
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.module
 
-val dataModule = module {
+fun dataModule(apiKey: String) = module {
     single {
         HttpClient {
             install(ContentNegotiation) {
@@ -29,7 +29,7 @@ val dataModule = module {
                     host = "api.thecatapi.com/v1"
                     parameters.append(
                         "api_key",
-                        "live_6QPkyl7XR20V5vTrTcTQiQXB2pXjqBKZTc4TXldwPuqXCuaJiKEITzWLx1A47of2"
+                        apiKey
                     )
                 }
             }
