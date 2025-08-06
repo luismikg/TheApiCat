@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,7 +50,6 @@ fun LoginScreen(
     Scaffold(
         bottomBar = {
             BodyFooter(
-                onNextScreen = onNextScreen,
                 onClickForgotPassword = onClickForgotPassword,
                 onClickRegister = onClickRegister
             )
@@ -60,6 +60,19 @@ fun LoginScreen(
             Body(
                 modifier = Modifier.weight(1f).background(colors.backgroundColor)
             )
+        }
+    }
+
+    val viewModel = koinViewModel<LoginViewModel>()
+    LaunchedEffect(Unit) {
+        viewModel.loginSuccess.collect { event ->
+            when (event) {
+                is LoginEvent.Success -> {
+                    onNextScreen()
+                }
+
+                is LoginEvent.Failure -> {}
+            }
         }
     }
 }
@@ -162,7 +175,6 @@ private fun BodyMain() {
 
 @Composable
 private fun BodyFooter(
-    onNextScreen: () -> Unit,
     onClickForgotPassword: () -> Unit,
     onClickRegister: () -> Unit
 ) {
@@ -179,7 +191,7 @@ private fun BodyFooter(
                 containerColor = colors.backgroundColor,
                 contentColor = colors.textMainColor //Active
             ), onClick = {
-                onNextScreen()
+                viewModel.makeLogin(token = viewModel.getToken())
             }) {
             Text(
                 text = "Continuar",

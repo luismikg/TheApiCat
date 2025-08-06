@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.sql.delight)
 }
 
 kotlin {
@@ -39,6 +40,11 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.ktor.client.okhttp)
+            // AndroidX
+            implementation(libs.androidx.startup.runtime)
+
+            // SQLDelight
+            implementation(libs.sql.delight.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -74,9 +80,16 @@ kotlin {
             //Pager
             implementation(libs.paging.compose.common)
             implementation(libs.paging.common)
+
+            // SQLDelight
+            implementation(libs.sql.delight.common)
+            api(libs.sql.delight.common.coroutines)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            // SQLDelight
+            implementation(libs.sql.delight.ios)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -85,6 +98,9 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.ktor.client.okhttp)
+
+            // SQLDelight
+            implementation(libs.sql.delight.desktop)
         }
     }
 }
@@ -128,6 +144,14 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "com.bbb.thecatapi"
             packageVersion = "1.0.0"
+        }
+    }
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("com.bbb.data.database")
         }
     }
 }

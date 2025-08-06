@@ -1,0 +1,14 @@
+PRAGMA user_version = 1;
+
+CREATE TABLE Session(
+    token TEXT NOT NULL PRIMARY KEY
+);
+
+getSession:
+SELECT * FROM Session;
+
+insertSession:
+INSERT OR REPLACE INTO Session(token) VALUES(?);
+
+delateSession:
+DELETE FROM Session;

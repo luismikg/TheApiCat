@@ -22,6 +22,14 @@ ktor = "2.3.12"
 viewmodel = "2.9.1"
 coil = "3.0.0-alpha08"
 pagingComposeCommon = "3.3.0-alpha02-0.5.1"
+# SQLDelight Dependencies
+sqldelight = "2.0.1"
+
+coroutinesExtensions = "2.0.1"
+statelyCommon = "2.0.5"
+
+# Android
+startupRuntime = "1.1.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -62,6 +70,16 @@ coil-network-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor", ve
 paging-common = { module = "app.cash.paging:paging-common", version.ref = "pagingComposeCommon" }
 paging-compose-common = { module = "app.cash.paging:paging-compose-common", version.ref = "pagingComposeCommon" }
 
+# SQLDelight
+sql-delight-common = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+sql-delight-common-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sql-delight-android = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
+sql-delight-ios = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+sql-delight-desktop = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+
+# Android
+androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
@@ -70,3 +88,5 @@ composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMul
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+
+sql-delight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
