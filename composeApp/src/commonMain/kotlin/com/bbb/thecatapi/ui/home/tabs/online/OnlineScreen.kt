@@ -28,7 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,12 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import app.cash.paging.compose.LazyPagingItems
-import app.cash.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.bbb.thecatapi.domain.model.BreedsModel
+import com.bbb.thecatapi.domain.model.FavoriteModel
 import com.bbb.thecatapi.getColorTheme
 import com.bbb.thecatapi.isAndroid
 import com.bbb.thecatapi.isDesktop
@@ -73,13 +73,12 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun OnlineScreen(
+    list: LazyPagingItems<BreedsModel>,
+    listFavorites: State<List<FavoriteModel>>,
+    refresh: () -> Unit,
     showDarkBackgroundLoading: (Boolean) -> Unit,
     showDarkBackground: (Boolean) -> Unit
 ) {
-    val viewModel = koinViewModel<OnlineViewModel>()
-    val state by viewModel.state.collectAsState()
-    val list = state.breedsModel.collectAsLazyPagingItems()
-
     var isRefreshing by remember { mutableStateOf(false) }
     var userScrollEnabled by remember { mutableStateOf(true) }
 
@@ -91,7 +90,7 @@ fun OnlineScreen(
             showDarkBackground(true)
             CoroutineScope(Dispatchers.Main).launch {
                 delay(2000)
-                viewModel.refresh()
+                refresh()
                 isRefreshing = false
                 userScrollEnabled = isRefreshing.not()
                 showDarkBackground(false)
@@ -100,6 +99,7 @@ fun OnlineScreen(
     ) { lazyGridState ->
         BreedsGrid(
             list = list,
+            listFavorites = listFavorites,
             showDarkBackgroundLoading = showDarkBackgroundLoading,
             lazyGridState = lazyGridState,
             userScrollEnabled = userScrollEnabled
@@ -110,10 +110,13 @@ fun OnlineScreen(
 @Composable
 private fun BreedsGrid(
     list: LazyPagingItems<BreedsModel>,
+    listFavorites: State<List<FavoriteModel>>,
     showDarkBackgroundLoading: (Boolean) -> Unit,
     lazyGridState: LazyGridState,
     userScrollEnabled: Boolean
 ) {
+    val viewModel = koinViewModel<OnlineViewModel>()
+
     val columns = if (isAndroid()) {
         GridCells.Fixed(count = 1)
     } else {
@@ -152,7 +155,19 @@ private fun BreedsGrid(
 
                 items(list.itemCount) { position ->
                     list[position]?.let { breedsModel ->
-                        ImageItem(item = breedsModel, onClickItem = {})
+                        val isFavorite = listFavorites.value.any { it.name == breedsModel.name }
+
+                        ImageItem(
+                            item = breedsModel,
+                            isFavorite = isFavorite,
+                            onClickFavorite = {
+                                if (isFavorite) {
+                                    viewModel.removeFavorite(breedsModel)
+                                } else {
+                                    viewModel.addFavorite(breedsModel)
+                                }
+                            },
+                            onClickItem = {})
                     }
                 }
 
@@ -166,7 +181,12 @@ private fun BreedsGrid(
 }
 
 @Composable
-private fun ImageItem(item: BreedsModel, onClickItem: (BreedsModel) -> Unit) {
+private fun ImageItem(
+    item: BreedsModel,
+    isFavorite: Boolean,
+    onClickFavorite: () -> Unit,
+    onClickItem: (BreedsModel) -> Unit,
+) {
 
     val colors = getColorTheme()
     Card(
@@ -239,13 +259,14 @@ private fun ImageItem(item: BreedsModel, onClickItem: (BreedsModel) -> Unit) {
                         style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Normal)
                     )
                 }
+
                 IconButton(
-                    onClick = {},
+                    onClick = { onClickFavorite() },
                     modifier = Modifier.weight(0.1f)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        tint = colors.backgroundColor,
+                        tint = if (isFavorite) colors.primary else colors.backgroundColor,
                         contentDescription = ""
                     )
                 }

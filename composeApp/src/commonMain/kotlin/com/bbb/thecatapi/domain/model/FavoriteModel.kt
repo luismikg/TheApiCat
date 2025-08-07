@@ -1,9 +1,8 @@
 package com.bbb.thecatapi.domain.model
 
-data class BreedsModel(
+data class FavoriteModel(
     val id: String,
     val name: String,
     val temperament: String,
-    val image: ImageBreedsModel,
-    var isFavorite: Boolean = false,
+    val imageUrl: String,
 )

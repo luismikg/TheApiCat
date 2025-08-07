@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import app.cash.paging.compose.collectAsLazyPagingItems
 import com.bbb.thecatapi.core.composableLibrary.LoadingScreen
 import com.bbb.thecatapi.getColorTheme
 import com.bbb.thecatapi.isAndroid
@@ -49,6 +52,7 @@ import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.blackCat
 import kotlinproject.composeapp.generated.resources.catPattern
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
@@ -63,6 +67,11 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
 
     var showDarkBackgroundLoading by remember { mutableStateOf(false) }
     var showDarkBackground by remember { mutableStateOf(false) }
+
+    val viewModel = koinViewModel<HomeViewModel>()
+    val state by viewModel.state.collectAsState()
+    val list = state.breedsModel.collectAsLazyPagingItems()
+    val listFavorites = viewModel.favorites.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -83,7 +92,10 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
 
 
                 NavigationBottom(
+                    list = list,
+                    listFavorites = listFavorites,
                     navigator = navController,
+                    refresh = { viewModel.refresh() },
                     showDarkBackgroundLoading = { isShow: Boolean ->
                         showDarkBackgroundLoading = isShow
                     },

@@ -2,32 +2,27 @@ package com.bbb.thecatapi.ui.home.tabs.online
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bbb.thecatapi.domain.GetCatBreedsPagingUseCase
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
+import com.bbb.thecatapi.domain.RepositoryDataBase
+import com.bbb.thecatapi.domain.model.BreedsModel
 import kotlinx.coroutines.launch
 
-class OnlineViewModel(private val getCatBreedsPagingUseCase: GetCatBreedsPagingUseCase) :
+class OnlineViewModel(private val repositoryDataBase: RepositoryDataBase) :
     ViewModel() {
-    private val _state = MutableStateFlow(OnlineState())
-    val state: StateFlow<OnlineState> = _state
 
-    init {
-        getCatBreedsPaging()
-    }
-
-    fun refresh() {
-        getCatBreedsPaging()
-    }
-
-    fun getCatBreedsPaging() {
+    fun addFavorite(breedsModel: BreedsModel) {
         viewModelScope.launch {
-            _state.update { s ->
-                s.copy(
-                    breedsModel = getCatBreedsPagingUseCase.invoke()
-                )
-            }
+            repositoryDataBase.upsertFavorite(
+                id = breedsModel.id,
+                name = breedsModel.name,
+                temperament = breedsModel.temperament,
+                imageUrl = breedsModel.image.url
+            )
+        }
+    }
+
+    fun removeFavorite(breedsModel: BreedsModel) {
+        viewModelScope.launch {
+            repositoryDataBase.removeFavorite(id = breedsModel.id)
         }
     }
 }

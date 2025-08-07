@@ -31,14 +31,14 @@ class BreedsPagingSource(
 
             //Remove all cache
             if (page == 0) {
-                repositoryDataBase.clearAllBreeds()
+                repositoryDataBase.clearAllBreedsCache()
             }
 
             val result = LoadResult.Page(
                 data = breeds.map { breedsResponse ->
 
                     //Save cache
-                    repositoryDataBase.upsertBreed(
+                    repositoryDataBase.upsertBreedCache(
                         id = breedsResponse.id,
                         name = breedsResponse.name,
                         temperament = breedsResponse.temperament,
@@ -62,7 +62,7 @@ class BreedsPagingSource(
 
         } catch (exception: IOException) {
 
-            val breeds = repositoryDataBase.getAllBreed().map { catBreeds ->
+            val breeds = repositoryDataBase.getAllBreedCache().map { catBreeds ->
                 BreedsModel(
                     id = catBreeds.id,
                     name = catBreeds.name,
