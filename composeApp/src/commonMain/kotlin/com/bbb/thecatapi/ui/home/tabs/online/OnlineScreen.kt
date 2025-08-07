@@ -2,6 +2,7 @@ package com.bbb.thecatapi.ui.home.tabs.online
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -64,7 +65,8 @@ fun OnlineScreen(
     listFavorites: State<List<FavoriteModel>>,
     refresh: () -> Unit,
     showDarkBackgroundLoading: (Boolean) -> Unit,
-    showDarkBackground: (Boolean) -> Unit
+    showDarkBackground: (Boolean) -> Unit,
+    onNextScreen: () -> Unit,
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     var userScrollEnabled by remember { mutableStateOf(true) }
@@ -89,7 +91,8 @@ fun OnlineScreen(
             listFavorites = listFavorites,
             showDarkBackgroundLoading = showDarkBackgroundLoading,
             lazyGridState = lazyGridState,
-            userScrollEnabled = userScrollEnabled
+            userScrollEnabled = userScrollEnabled,
+            onNextScreen = onNextScreen
         )
     }
 }
@@ -100,7 +103,8 @@ private fun BreedsGrid(
     listFavorites: State<List<FavoriteModel>>,
     showDarkBackgroundLoading: (Boolean) -> Unit,
     lazyGridState: LazyGridState,
-    userScrollEnabled: Boolean
+    userScrollEnabled: Boolean,
+    onNextScreen: () -> Unit,
 ) {
     val viewModel = koinViewModel<OnlineViewModel>()
 
@@ -154,7 +158,9 @@ private fun BreedsGrid(
                                     viewModel.addFavorite(breedsModel)
                                 }
                             },
-                            onClickItem = {})
+                            onClickItem = {
+                                onNextScreen()
+                            })
                     }
                 }
 
@@ -177,7 +183,7 @@ private fun ImageItem(
 
     val colors = getColorTheme()
     Card(
-        modifier = Modifier.fillMaxWidth().height(400.dp),
+        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem(item) },
         shape = RoundedCornerShape(percent = 12)
     ) {
         Box(contentAlignment = Alignment.BottomStart) {

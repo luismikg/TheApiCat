@@ -102,6 +102,7 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
                     showDarkBackground = { isShow: Boolean ->
                         showDarkBackground = isShow
                     },
+                    onNextScreen = onNextScreen
                 )
 
                 Box(

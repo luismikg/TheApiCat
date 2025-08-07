@@ -2,6 +2,7 @@ package com.bbb.thecatapi.ui.home.tabs.favorites
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +40,6 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.bbb.thecatapi.core.composableLibrary.PullRefreshList
-import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.domain.model.FavoriteModel
 import com.bbb.thecatapi.getColorTheme
 import com.bbb.thecatapi.isAndroid
@@ -50,11 +50,13 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun FavoritesScreen(
     listFavorites: State<List<FavoriteModel>>,
+    onNextScreen: () -> Unit,
 ) {
     PullRefreshList { lazyGridState ->
         BreedsGrid(
             list = listFavorites.value,
             lazyGridState = lazyGridState,
+            onNextScreen = onNextScreen
         )
     }
 }
@@ -63,6 +65,7 @@ fun FavoritesScreen(
 private fun BreedsGrid(
     list: List<FavoriteModel>,
     lazyGridState: LazyGridState,
+    onNextScreen: () -> Unit,
 ) {
     val columns = if (isAndroid()) {
         GridCells.Fixed(count = 1)
@@ -88,7 +91,9 @@ private fun BreedsGrid(
         items(list.size) { position ->
             ImageItem(
                 item = list[position],
-                onClickItem = {}
+                onClickItem = {
+                    onNextScreen()
+                }
             )
         }
     }
@@ -98,11 +103,11 @@ private fun BreedsGrid(
 @Composable
 private fun ImageItem(
     item: FavoriteModel,
-    onClickItem: (BreedsModel) -> Unit,
+    onClickItem: (FavoriteModel) -> Unit,
 ) {
     val colors = getColorTheme()
     Card(
-        modifier = Modifier.fillMaxWidth().height(400.dp),
+        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem(item) },
         shape = RoundedCornerShape(percent = 12)
     ) {
         Box(contentAlignment = Alignment.BottomStart) {

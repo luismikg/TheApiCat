@@ -19,6 +19,7 @@ fun NavigationBottom(
     navigator: NavHostController,
     showDarkBackgroundLoading: (Boolean) -> Unit,
     showDarkBackground: (Boolean) -> Unit,
+    onNextScreen: () -> Unit
 ) {
 
     NavHost(navController = navigator, startDestination = BottomNavigationItem.Online.route) {
@@ -29,11 +30,15 @@ fun NavigationBottom(
                 listFavorites = listFavorites,
                 refresh = refresh,
                 showDarkBackgroundLoading = showDarkBackgroundLoading,
-                showDarkBackground = showDarkBackground
+                showDarkBackground = showDarkBackground,
+                onNextScreen = onNextScreen
             )
         }
         composable(route = BottomNavigationItem.Favorite.route) {
-            FavoritesScreen(listFavorites = listFavorites)
+            FavoritesScreen(
+                listFavorites = listFavorites,
+                onNextScreen = onNextScreen
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.bbb.thecatapi.ui.core.navigation
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,8 +24,12 @@ fun NavigationApp() {
         composable(route = Routes.HomeScreen.route) {
             HomeScreen(
                 onClickExit = { mainController.navigateUp() },
-                onNextScreen = {}
+                onNextScreen = { mainController.navigate(Routes.DetailScreen.route) }
             )
+        }
+
+        composable(route = Routes.DetailScreen.route) {
+            Column { }
         }
     }
 }
