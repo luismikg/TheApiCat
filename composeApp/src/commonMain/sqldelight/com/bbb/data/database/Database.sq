@@ -1,0 +1,52 @@
+PRAGMA user_version = 1;
+
+--SESSION
+CREATE TABLE IF NOT EXISTS Session(
+    token TEXT NOT NULL PRIMARY KEY
+);
+
+getSession:
+SELECT * FROM Session;
+
+insertSession:
+INSERT OR REPLACE INTO Session(token) VALUES(?);
+
+deleteSession:
+DELETE FROM Session;
+
+--FAVORITE
+CREATE TABLE IF NOT EXISTS Favorite(
+    id TEXT NOT NULL,
+    token TEXT NOT NULL,
+    name TEXT NOT NULL,
+    temperament TEXT NOT NULL,
+    image_url TEXT,
+    PRIMARY KEY(token, id)
+);
+
+getFavorite:
+SELECT * FROM Favorite WHERE token=?;
+
+upsertFavorite:
+INSERT OR REPLACE INTO Favorite(id, token, name, temperament, image_url) VALUES (?, ?, ?, ?, ?);
+
+deleteFavorite:
+DELETE FROM Favorite WHERE token=? AND id=?;
+
+-- CACHE
+CREATE TABLE IF NOT EXISTS CatBreedsCache(
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    temperament TEXT NOT NULL,
+    image_url TEXT
+);
+
+-- Tabla CatBreedsCache
+insertCatBreedsCache:
+INSERT OR REPLACE INTO CatBreedsCache(id, name, temperament, image_url) VALUES (?, ?, ?, ?);
+
+getAllCatBreedsCache:
+SELECT * FROM CatBreedsCache;
+
+clearAllCatBreedsCache:
+DELETE FROM CatBreedsCache;

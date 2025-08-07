@@ -33,7 +33,7 @@ fun NavigationBottom(
             )
         }
         composable(route = BottomNavigationItem.Favorite.route) {
-            FavoritesScreen()
+            FavoritesScreen(listFavorites = listFavorites)
         }
     }
 }
