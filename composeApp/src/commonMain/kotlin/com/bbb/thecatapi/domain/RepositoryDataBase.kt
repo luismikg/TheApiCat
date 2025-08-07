@@ -1,5 +1,6 @@
 package com.bbb.thecatapi.domain
 
+import com.bbb.data.database.CatBreeds
 import kotlinx.coroutines.flow.Flow
 
 interface RepositoryDataBase {
@@ -8,4 +9,5 @@ interface RepositoryDataBase {
     suspend fun deleteSession()
     suspend fun clearAllBreeds()
     suspend fun upsertBreed(id: String, name: String, temperament: String, imageUrl: String)
+    suspend fun getAllBreed(): List<CatBreeds>
 }

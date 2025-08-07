@@ -2,6 +2,7 @@ package com.bbb.thecatapi.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import com.bbb.data.database.CatBreeds
 import com.bbb.data.database.Database
 import com.bbb.thecatapi.domain.RepositoryDataBase
 import kotlinx.coroutines.Dispatchers
@@ -44,5 +45,11 @@ class RepositoryDataBaseImpl(
             temperament = temperament,
             image_url = imageUrl
         )
+    }
+
+    override suspend fun getAllBreed(): List<CatBreeds> {
+        return database.databaseQueries
+            .getAllBreeds()
+            .executeAsList()
     }
 }

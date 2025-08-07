@@ -21,11 +21,6 @@ class BreedsPagingSource(
         return try {
             val page = params.key ?: 0
 
-            //Remove all cache
-            if (page == 0) {
-                repositoryDataBase.clearAllBreeds()
-            }
-
             val response = apiService.getPagingBreeds(
                 page = page, limit = RepositoryCatsImpl.MAX_ITEMS_PAGER
             )
@@ -33,6 +28,11 @@ class BreedsPagingSource(
 
             val prevKey = if (page > 0) -1 else null
             val nextKey = if (breeds.isNotEmpty()) page + 1 else null
+
+            //Remove all cache
+            if (page == 0) {
+                repositoryDataBase.clearAllBreeds()
+            }
 
             val result = LoadResult.Page(
                 data = breeds.map { breedsResponse ->
@@ -61,7 +61,23 @@ class BreedsPagingSource(
             result
 
         } catch (exception: IOException) {
-            LoadResult.Error(exception)
+
+            val breeds = repositoryDataBase.getAllBreed().map { catBreeds ->
+                BreedsModel(
+                    id = catBreeds.id,
+                    name = catBreeds.name,
+                    temperament = catBreeds.temperament,
+                    image = ImageBreedsModel(
+                        url = catBreeds.image_url ?: ""
+                    )
+                )
+            }
+
+            if (breeds.isEmpty()) {
+                LoadResult.Error(exception)
+            } else {
+                LoadResult.Page(data = breeds, prevKey = null, nextKey = null)
+            }
         }
     }
 }

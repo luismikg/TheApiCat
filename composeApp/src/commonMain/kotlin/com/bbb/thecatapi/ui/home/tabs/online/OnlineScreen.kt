@@ -199,6 +199,7 @@ private fun ImageItem(item: BreedsModel, onClickItem: (BreedsModel) -> Unit) {
                         )
                         .build(),
                     placeholder = painterResource(Res.drawable.blackCat),
+                    error = painterResource(Res.drawable.blackCat),
                     contentDescription = item.name,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxSize()
