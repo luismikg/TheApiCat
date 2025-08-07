@@ -26,4 +26,23 @@ class RepositoryDataBaseImpl(
     override suspend fun deleteSession() {
         database.databaseQueries.delateSession()
     }
+
+    //CACHE
+    override suspend fun clearAllBreeds() {
+        database.databaseQueries.clearAllBreeds()
+    }
+
+    override suspend fun upsertBreed(
+        id: String,
+        name: String,
+        temperament: String,
+        imageUrl: String
+    ) {
+        database.databaseQueries.insertBreeds(
+            id = id,
+            name = name,
+            temperament = temperament,
+            image_url = imageUrl
+        )
+    }
 }

@@ -16,13 +16,14 @@ class RepositoryCatsImpl(
 ) : RepositoryCats {
 
     companion object {
-        const val MAX_ITEMS_PAGER = 10
-        const val PREFETCH_DISTANCE = 8
+        const val MAX_ITEMS_PAGER = 3
+        const val PREFETCH_DISTANCE = 1
     }
 
     override suspend fun getBreeds(): List<BreedsModel> {
         return api.getBreeds().map { breedsResponse ->
             BreedsModel(
+                id = breedsResponse.id,
                 name = breedsResponse.name,
                 temperament = breedsResponse.temperament,
                 image = ImageBreedsModel(

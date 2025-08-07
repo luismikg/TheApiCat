@@ -4,11 +4,15 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bbb.thecatapi.data.RepositoryCatsImpl
 import com.bbb.thecatapi.data.remote.ApiService
+import com.bbb.thecatapi.domain.RepositoryDataBase
 import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.domain.model.ImageBreedsModel
 import io.ktor.utils.io.errors.IOException
 
-class BreedsPagingSource(private val apiService: ApiService) : PagingSource<Int, BreedsModel>() {
+class BreedsPagingSource(
+    private val apiService: ApiService,
+    private val repositoryDataBase: RepositoryDataBase
+) : PagingSource<Int, BreedsModel>() {
     override fun getRefreshKey(state: PagingState<Int, BreedsModel>): Int? {
         return state.anchorPosition
     }
@@ -16,6 +20,12 @@ class BreedsPagingSource(private val apiService: ApiService) : PagingSource<Int,
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, BreedsModel> {
         return try {
             val page = params.key ?: 0
+
+            //Remove all cache
+            if (page == 0) {
+                repositoryDataBase.clearAllBreeds()
+            }
+
             val response = apiService.getPagingBreeds(
                 page = page, limit = RepositoryCatsImpl.MAX_ITEMS_PAGER
             )
@@ -24,9 +34,19 @@ class BreedsPagingSource(private val apiService: ApiService) : PagingSource<Int,
             val prevKey = if (page > 0) -1 else null
             val nextKey = if (breeds.isNotEmpty()) page + 1 else null
 
-            LoadResult.Page(
+            val result = LoadResult.Page(
                 data = breeds.map { breedsResponse ->
+
+                    //Save cache
+                    repositoryDataBase.upsertBreed(
+                        id = breedsResponse.id,
+                        name = breedsResponse.name,
+                        temperament = breedsResponse.temperament,
+                        imageUrl = breedsResponse.image.url
+                    )
+
                     BreedsModel(
+                        id = breedsResponse.id,
                         name = breedsResponse.name,
                         temperament = breedsResponse.temperament,
                         image = ImageBreedsModel(
@@ -37,6 +57,8 @@ class BreedsPagingSource(private val apiService: ApiService) : PagingSource<Int,
                 prevKey = prevKey,
                 nextKey = nextKey
             )
+
+            result
 
         } catch (exception: IOException) {
             LoadResult.Error(exception)
