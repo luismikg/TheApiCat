@@ -73,3 +73,5 @@ SELECT * FROM CatBreedsSelected LIMIT 1;
 insertCatBreedsSelected:
 INSERT OR REPLACE INTO CatBreedsSelected(id, name, temperament, image_url, origen, description, wikipedia_url) VALUES (?, ?, ?, ?, ?, ?, ?);
 
+clearAllCatBreedsSelected:
+DELETE FROM CatBreedsSelected;

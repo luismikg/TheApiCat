@@ -127,6 +127,7 @@ class RepositoryDataBaseImpl(
         description: String,
         wikipediaUrl: String
     ) {
+        database.databaseQueries.clearAllCatBreedsSelected()
         database.databaseQueries.insertCatBreedsSelected(
             id = id,
             name = name,
