@@ -3,14 +3,14 @@ package com.bbb.thecatapi.data.remote.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.bbb.thecatapi.data.RepositoryCatsImpl
-import com.bbb.thecatapi.data.remote.ApiService
+import com.bbb.thecatapi.data.remote.IApiService
 import com.bbb.thecatapi.domain.RepositoryDataBase
 import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.domain.model.ImageBreedsModel
 import io.ktor.utils.io.errors.IOException
 
 class BreedsPagingSource(
-    private val apiService: ApiService,
+    private val apiService: IApiService,
     private val repositoryDataBase: RepositoryDataBase
 ) : PagingSource<Int, BreedsModel>() {
     override fun getRefreshKey(state: PagingState<Int, BreedsModel>): Int? {

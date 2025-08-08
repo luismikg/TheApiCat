@@ -4,6 +4,7 @@ import com.bbb.data.database.Database
 import com.bbb.thecatapi.data.RepositoryCatsImpl
 import com.bbb.thecatapi.data.RepositoryDataBaseImpl
 import com.bbb.thecatapi.data.remote.ApiService
+import com.bbb.thecatapi.data.remote.IApiService
 import com.bbb.thecatapi.data.remote.paging.BreedsPagingSource
 import com.bbb.thecatapi.domain.RepositoryCats
 import com.bbb.thecatapi.domain.RepositoryDataBase
@@ -36,8 +37,8 @@ fun dataModule(apiKey: String) = module {
         }
     }
 
-    //factory<ApiService>{ ApiService(get()) }
-    factoryOf(::ApiService)
+    factory<IApiService> { ApiService(get()) }
+    //factoryOf(::ApiService)
     factory<RepositoryCats> { RepositoryCatsImpl(get(), get()) }
     factoryOf(::BreedsPagingSource)
     factory<RepositoryDataBase> { RepositoryDataBaseImpl(get<Database>()) }

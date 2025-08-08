@@ -3,7 +3,7 @@ package com.bbb.thecatapi.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.bbb.thecatapi.data.remote.ApiService
+import com.bbb.thecatapi.data.remote.IApiService
 import com.bbb.thecatapi.data.remote.paging.BreedsPagingSource
 import com.bbb.thecatapi.domain.RepositoryCats
 import com.bbb.thecatapi.domain.model.BreedsModel
@@ -11,7 +11,7 @@ import com.bbb.thecatapi.domain.model.ImageBreedsModel
 import kotlinx.coroutines.flow.Flow
 
 class RepositoryCatsImpl(
-    private val api: ApiService,
+    private val api: IApiService,
     private val breedsPagingSource: BreedsPagingSource
 ) : RepositoryCats {
 
