@@ -115,17 +115,18 @@ Después de descargar e instalar el archivo `.dmg` desde la [sección de descarg
 ---
 
 ## 📁 Estructura del proyecto
-
-/thecatapp
-├── androidApp/                    # launcher Android
-├── composeApp/                    # módulo KMP (UI, lógica común y desktop)
-│   ├── src/commonMain/            # código común (VMs, dominio, UI común)
-│   ├── src/androidMain/           # Android específico
-│   ├── src/jvmMain/               # Desktop (JVM) específico
-│   └── build.gradle.kts
-├── icon/                          # íconos desktop
-│   ├── windows_icon.ico
-│   ├── mac_icon.icns
-│   └── linux_icon.png
+```txt
+/thecatapp 
+├── androidApp/                    # launcher Android 
+├── composeApp/                    # módulo KMP (UI, lógica común y desktop) 
+│   ├── src/commonMain/            # código común (VMs, dominio, UI común) 
+│   ├── src/androidMain/           # Android específico 
+│   ├── src/jvmMain/               # Desktop (JVM) específico 
+│   └── build.gradle.kts 
+├── icon/                          # íconos desktop 
+│   ├── windows_icon.ico 
+│   ├── mac_icon.icns 
+│   └── linux_icon.png 
 ├── local.properties               # the_cat_api_key=...
 └── build.gradle.kts               # configuración raíz
+```
