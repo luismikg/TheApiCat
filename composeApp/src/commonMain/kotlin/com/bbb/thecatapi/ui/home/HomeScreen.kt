@@ -76,7 +76,11 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             topBar = {
-                CustomTopBar(currentRoute, onClickExit = onClickExit)
+                CustomTopBar(
+                    totalFavorites = "${listFavorites.value.size}",
+                    currentRoute = currentRoute,
+                    onClickExit = onClickExit
+                )
             },
             bottomBar = {
                 BottomNavigationBar(
@@ -131,7 +135,7 @@ fun HomeScreen(onClickExit: () -> Unit, onNextScreen: () -> Unit) {
 }
 
 @Composable
-private fun CustomTopBar(currentRoute: String, onClickExit: () -> Unit) {
+private fun CustomTopBar(totalFavorites: String, currentRoute: String, onClickExit: () -> Unit) {
 
     val colors = getColorTheme()
     var instruction = "Online"
@@ -160,12 +164,20 @@ private fun CustomTopBar(currentRoute: String, onClickExit: () -> Unit) {
                 )
             )
         }
-        CustomHeaderCard(currentRoute = currentRoute, onClickExit = onClickExit)
+        CustomHeaderCard(
+            totalFavorites = totalFavorites,
+            currentRoute = currentRoute,
+            onClickExit = onClickExit
+        )
     }
 }
 
 @Composable
-private fun CustomHeaderCard(currentRoute: String, onClickExit: () -> Unit) {
+private fun CustomHeaderCard(
+    totalFavorites: String,
+    currentRoute: String,
+    onClickExit: () -> Unit
+) {
 
     val colors = getColorTheme()
     var rotated by remember { mutableStateOf(false) }
@@ -195,7 +207,7 @@ private fun CustomHeaderCard(currentRoute: String, onClickExit: () -> Unit) {
     ) {
         rotated = currentRoute == BottomNavigationItem.Favorite.route
         if (rotated) {
-            BackCard(onClickExit)
+            BackCard(totalFavorites = totalFavorites, onClickExit = onClickExit)
         } else {
             FrondCard(onClickExit)
         }
@@ -252,7 +264,7 @@ private fun HeaderFrondCard(onClickExit: () -> Unit) {
 }
 
 @Composable
-private fun BackCard(onClickExit: () -> Unit) {
+private fun BackCard(totalFavorites: String, onClickExit: () -> Unit) {
 
     Box(
         modifier = Modifier
@@ -270,7 +282,7 @@ private fun BackCard(onClickExit: () -> Unit) {
         )
 
         Column {
-            HeaderBackCard { onClickExit() }
+            HeaderBackCard(totalFavorites = totalFavorites) { onClickExit() }
             Instructions(
                 title = "Revisa tus gatitos favoritos",
                 subTitle = "Disfruta de los gatitos que has decidido marcar como favoritos"
@@ -280,7 +292,7 @@ private fun BackCard(onClickExit: () -> Unit) {
 }
 
 @Composable
-private fun HeaderBackCard(onClickExit: () -> Unit) {
+private fun HeaderBackCard(totalFavorites: String, onClickExit: () -> Unit) {
 
     val colors = getColorTheme()
 
@@ -303,7 +315,7 @@ private fun HeaderBackCard(onClickExit: () -> Unit) {
                 )
             }
             Text(
-                text = "14",
+                text = totalFavorites,
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.SemiBold
