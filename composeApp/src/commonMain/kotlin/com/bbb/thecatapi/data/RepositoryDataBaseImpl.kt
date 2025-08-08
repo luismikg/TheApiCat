@@ -5,7 +5,9 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.bbb.data.database.CatBreedsCache
 import com.bbb.data.database.Database
 import com.bbb.thecatapi.domain.RepositoryDataBase
+import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.domain.model.FavoriteModel
+import com.bbb.thecatapi.domain.model.ImageBreedsModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
@@ -42,13 +44,19 @@ class RepositoryDataBaseImpl(
         id: String,
         name: String,
         temperament: String,
-        imageUrl: String
+        imageUrl: String,
+        origen: String,
+        description: String,
+        wikipediaUrl: String
     ) {
         database.databaseQueries.insertCatBreedsCache(
             id = id,
             name = name,
             temperament = temperament,
-            image_url = imageUrl
+            image_url = imageUrl,
+            origen = origen,
+            description = description,
+            wikipedia_url = wikipediaUrl
         )
     }
 
@@ -71,7 +79,10 @@ class RepositoryDataBaseImpl(
                             id = favorite.id,
                             name = favorite.name,
                             temperament = favorite.temperament,
-                            imageUrl = favorite.image_url ?: ""
+                            imageUrl = favorite.image_url ?: "",
+                            origen = favorite.origen,
+                            description = favorite.description,
+                            wikipediaUrl = favorite.wikipedia_url
                         )
                     }
                 }
@@ -82,7 +93,10 @@ class RepositoryDataBaseImpl(
         id: String,
         name: String,
         temperament: String,
-        imageUrl: String
+        imageUrl: String,
+        origen: String,
+        description: String,
+        wikipediaUrl: String
     ) {
         val session = getSession().first().firstOrNull() ?: ""
         database.databaseQueries
@@ -91,7 +105,10 @@ class RepositoryDataBaseImpl(
                 token = session,
                 name = name,
                 temperament = temperament,
-                image_url = imageUrl
+                image_url = imageUrl,
+                origen = origen,
+                description = description,
+                wikipedia_url = wikipediaUrl
             )
     }
 
@@ -99,5 +116,44 @@ class RepositoryDataBaseImpl(
         val session = getSession().first().firstOrNull() ?: ""
         database.databaseQueries
             .deleteFavorite(token = session, id = id)
+    }
+
+    override suspend fun upsertBreedSelected(
+        id: String,
+        name: String,
+        temperament: String,
+        imageUrl: String,
+        origen: String,
+        description: String,
+        wikipediaUrl: String
+    ) {
+        database.databaseQueries.insertCatBreedsSelected(
+            id = id,
+            name = name,
+            temperament = temperament,
+            image_url = imageUrl,
+            origen = origen,
+            description = description,
+            wikipedia_url = wikipediaUrl
+        )
+    }
+
+    override fun getBreedSelected(): Flow<List<BreedsModel>> {
+        return database.databaseQueries
+            .getOneCatBreedSelected()
+            .asFlow()
+            .mapToList(context = Dispatchers.IO).map { list ->
+                list.map { item ->
+                    BreedsModel(
+                        id = item.id,
+                        name = item.name,
+                        temperament = item.temperament,
+                        image = ImageBreedsModel(url = item.image_url),
+                        origen = item.origen,
+                        description = item.description,
+                        wikipediaUrl = item.wikipedia_url
+                    )
+                }
+            }
     }
 }

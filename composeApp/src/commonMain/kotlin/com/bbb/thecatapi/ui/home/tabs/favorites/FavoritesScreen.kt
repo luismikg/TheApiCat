@@ -40,12 +40,15 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.bbb.thecatapi.core.composableLibrary.PullRefreshList
+import com.bbb.thecatapi.domain.model.BreedsModel
 import com.bbb.thecatapi.domain.model.FavoriteModel
+import com.bbb.thecatapi.domain.model.ImageBreedsModel
 import com.bbb.thecatapi.getColorTheme
 import com.bbb.thecatapi.isAndroid
 import kotlinproject.composeapp.generated.resources.Res
 import kotlinproject.composeapp.generated.resources.blackCat
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun FavoritesScreen(
@@ -67,6 +70,7 @@ private fun BreedsGrid(
     lazyGridState: LazyGridState,
     onNextScreen: () -> Unit,
 ) {
+    val viewModel = koinViewModel<FavoritesViewModel>()
     val columns = if (isAndroid()) {
         GridCells.Fixed(count = 1)
     } else {
@@ -89,9 +93,21 @@ private fun BreedsGrid(
         }
 
         items(list.size) { position ->
+            val item = list[position]
             ImageItem(
-                item = list[position],
+                item = item,
                 onClickItem = {
+                    viewModel.addSelectedItem(
+                        BreedsModel(
+                            id = item.id,
+                            name = item.name,
+                            temperament = item.temperament,
+                            image = ImageBreedsModel(url = item.imageUrl),
+                            origen = item.origen,
+                            description = item.description,
+                            wikipediaUrl = item.wikipediaUrl
+                        )
+                    )
                     onNextScreen()
                 }
             )
@@ -99,15 +115,14 @@ private fun BreedsGrid(
     }
 }
 
-
 @Composable
 private fun ImageItem(
     item: FavoriteModel,
-    onClickItem: (FavoriteModel) -> Unit,
+    onClickItem: () -> Unit,
 ) {
     val colors = getColorTheme()
     Card(
-        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem(item) },
+        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem() },
         shape = RoundedCornerShape(percent = 12)
     ) {
         Box(contentAlignment = Alignment.BottomStart) {

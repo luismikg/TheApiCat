@@ -5,4 +5,7 @@ data class FavoriteModel(
     val name: String,
     val temperament: String,
     val imageUrl: String,
+    var origen: String,
+    var description: String,
+    val wikipediaUrl: String,
 )

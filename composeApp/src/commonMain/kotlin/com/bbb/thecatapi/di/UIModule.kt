@@ -1,5 +1,6 @@
 package com.bbb.thecatapi.di
 
+import com.bbb.thecatapi.ui.detail.DetailViewModel
 import com.bbb.thecatapi.ui.home.HomeViewModel
 import com.bbb.thecatapi.ui.home.tabs.favorites.FavoritesViewModel
 import com.bbb.thecatapi.ui.home.tabs.online.OnlineViewModel
@@ -12,4 +13,5 @@ val uiModule = module {
     viewModelOf(::OnlineViewModel)
     viewModelOf(::FavoritesViewModel)
     viewModelOf(::LoginViewModel)
+    viewModelOf(::DetailViewModel)
 }

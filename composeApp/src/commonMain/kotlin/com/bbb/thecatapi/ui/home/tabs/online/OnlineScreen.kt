@@ -159,8 +159,10 @@ private fun BreedsGrid(
                                 }
                             },
                             onClickItem = {
+                                viewModel.addSelectedItem(breedsModel)
                                 onNextScreen()
-                            })
+                            }
+                        )
                     }
                 }
 
@@ -178,12 +180,12 @@ private fun ImageItem(
     item: BreedsModel,
     isFavorite: Boolean,
     onClickFavorite: () -> Unit,
-    onClickItem: (BreedsModel) -> Unit,
+    onClickItem: () -> Unit,
 ) {
 
     val colors = getColorTheme()
     Card(
-        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem(item) },
+        modifier = Modifier.fillMaxWidth().height(400.dp).clickable { onClickItem() },
         shape = RoundedCornerShape(percent = 12)
     ) {
         Box(contentAlignment = Alignment.BottomStart) {

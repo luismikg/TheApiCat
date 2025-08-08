@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS Favorite(
     name TEXT NOT NULL,
     temperament TEXT NOT NULL,
     image_url TEXT,
+    origen TEXT NOT NULL,
+    description TEXT NOT NULL,
+    wikipedia_url TEXT NOT NULL,
     PRIMARY KEY(token, id)
 );
 
@@ -28,7 +31,7 @@ getFavorite:
 SELECT * FROM Favorite WHERE token=?;
 
 upsertFavorite:
-INSERT OR REPLACE INTO Favorite(id, token, name, temperament, image_url) VALUES (?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO Favorite(id, token, name, temperament, image_url, origen, description, wikipedia_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteFavorite:
 DELETE FROM Favorite WHERE token=? AND id=?;
@@ -38,15 +41,35 @@ CREATE TABLE IF NOT EXISTS CatBreedsCache(
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     temperament TEXT NOT NULL,
-    image_url TEXT
+    image_url TEXT NOT NULL,
+    origen TEXT NOT NULL,
+    description TEXT NOT NULL,
+    wikipedia_url TEXT NOT NULL
 );
 
--- Tabla CatBreedsCache
 insertCatBreedsCache:
-INSERT OR REPLACE INTO CatBreedsCache(id, name, temperament, image_url) VALUES (?, ?, ?, ?);
+INSERT OR REPLACE INTO CatBreedsCache(id, name, temperament, image_url, origen, description, wikipedia_url) VALUES (?, ?, ?, ?, ?, ?, ?);
 
 getAllCatBreedsCache:
 SELECT * FROM CatBreedsCache;
 
 clearAllCatBreedsCache:
 DELETE FROM CatBreedsCache;
+
+-- SELECTED
+CREATE TABLE IF NOT EXISTS CatBreedsSelected(
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    temperament TEXT NOT NULL,
+    image_url TEXT NOT NULL,
+    origen TEXT NOT NULL,
+    description TEXT NOT NULL,
+    wikipedia_url TEXT NOT NULL
+);
+
+getOneCatBreedSelected:
+SELECT * FROM CatBreedsSelected LIMIT 1;
+
+insertCatBreedsSelected:
+INSERT OR REPLACE INTO CatBreedsSelected(id, name, temperament, image_url, origen, description, wikipedia_url) VALUES (?, ?, ?, ?, ?, ?, ?);
+

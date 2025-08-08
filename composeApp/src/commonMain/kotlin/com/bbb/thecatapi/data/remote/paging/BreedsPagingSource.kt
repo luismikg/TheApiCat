@@ -42,7 +42,10 @@ class BreedsPagingSource(
                         id = breedsResponse.id,
                         name = breedsResponse.name,
                         temperament = breedsResponse.temperament,
-                        imageUrl = breedsResponse.image.url
+                        imageUrl = breedsResponse.image.url,
+                        origen = breedsResponse.origin,
+                        description = breedsResponse.description,
+                        wikipediaUrl = breedsResponse.wikipediaUrl
                     )
 
                     BreedsModel(
@@ -51,7 +54,10 @@ class BreedsPagingSource(
                         temperament = breedsResponse.temperament,
                         image = ImageBreedsModel(
                             url = breedsResponse.image.url
-                        )
+                        ),
+                        origen = breedsResponse.origin,
+                        description = breedsResponse.description,
+                        wikipediaUrl = breedsResponse.wikipediaUrl
                     )
                 },
                 prevKey = prevKey,
@@ -69,7 +75,10 @@ class BreedsPagingSource(
                     temperament = catBreeds.temperament,
                     image = ImageBreedsModel(
                         url = catBreeds.image_url ?: ""
-                    )
+                    ),
+                    origen = catBreeds.origen,
+                    description = catBreeds.description,
+                    wikipediaUrl = catBreeds.image_url
                 )
             }
 

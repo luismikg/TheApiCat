@@ -28,7 +28,10 @@ class RepositoryCatsImpl(
                 temperament = breedsResponse.temperament,
                 image = ImageBreedsModel(
                     url = breedsResponse.image.url
-                )
+                ),
+                origen = breedsResponse.origin,
+                description = breedsResponse.description,
+                wikipediaUrl = breedsResponse.wikipediaUrl
             )
         }
     }

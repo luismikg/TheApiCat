@@ -1,10 +1,10 @@
 package com.bbb.thecatapi.ui.core.navigation
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.bbb.thecatapi.ui.detail.DetailScreen
 import com.bbb.thecatapi.ui.home.HomeScreen
 import com.bbb.thecatapi.ui.login.LoginScreen
 
@@ -29,7 +29,7 @@ fun NavigationApp() {
         }
 
         composable(route = Routes.DetailScreen.route) {
-            Column { }
+            DetailScreen { mainController.navigateUp() }
         }
     }
 }
