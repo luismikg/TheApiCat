@@ -16,8 +16,8 @@ Aplicación Kotlin Multiplatform (Android + Desktop) para explorar razas de gato
 
 | Plataforma      | Enlace de descarga                                                                                             |
 |-----------------|----------------------------------------------------------------------------------------------------------------|
-| Android (APK)   | [TheCatApp v1.0.0 - APK](https://github.com/luismikg/TheApiCat/releases/download/v1.0.0/TheCatApp-release.apk) |
-| macOS (DMG)     | [TheCatApp v1.0.0 - DMG](https://github.com/luismikg/TheApiCat/releases/download/v1.0.0/TheCatApp.app)         |
+| Android (APK)   | [TheCatApp v1.0.0 - APK](https://github.com/luismikg/TheApiCat/releases/download/executablesV1/TheCatApp.apk)  |
+| macOS (DMG)     | [TheCatApp v1.0.0 - DMG](https://github.com/luismikg/TheApiCat/releases/download/executablesV1/mac.zip)        |
 
 ---
 
