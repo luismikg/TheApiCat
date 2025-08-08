@@ -147,9 +147,22 @@ compose.desktop {
         mainClass = "com.bbb.thecatapi.MainKt"
 
         nativeDistributions {
+            modules("java.sql")
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.bbb.thecatapi"
+            packageName = "TheCatApp"
             packageVersion = "1.0.0"
+
+            windows {
+                iconFile.set(project.file("icon/windows_icon.ico"))
+            }
+
+            macOS {
+                iconFile.set(project.file("icon/mac_icon.icns"))
+            }
+
+            linux {
+                iconFile.set(project.file("icon/linux_icon.png"))
+            }
         }
     }
 }
