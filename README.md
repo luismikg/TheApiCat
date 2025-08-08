@@ -12,6 +12,52 @@ Aplicación Kotlin Multiplatform (Android + Desktop) para explorar razas de gato
    
 ---
 
+## 🔐 Requisitos de acceso
+
+Para iniciar sesión en TheCatApp, los usuarios deben proporcionar credenciales válidas que cumplan con las siguientes condiciones:
+
+---
+
+### 📧 Correo electrónico
+
+Debe ser un correo válido, por ejemplo:
+
+- `usuario@gmail.com`
+- `nombreapellido@gmail.com.mx`
+
+Se valida que tenga formato de email correcto (con `@` y dominio).
+
+---
+
+### 🔑 Contraseña segura
+
+La contraseña debe cumplir todas las siguientes reglas:
+
+- Mínimo **8 caracteres**
+- Al menos **una letra mayúscula**
+- Al menos **una letra minúscula**
+- Al menos **un número**
+- Al menos **un símbolo especial** (por ejemplo: `!`, `@`, `#`, `$`, etc.)
+
+#### ✅ Ejemplos válidos:
+
+- `Password1!`
+- `M1clave#`
+- `Aa1@aaaa`
+
+#### ❌ Ejemplos inválidos:
+
+| Contraseña     | Motivo del rechazo                |
+|----------------|-----------------------------------|
+| `password1!`   | Falta mayúscula                   |
+| `PASSWORD1!`   | Falta minúscula                   |
+| `Password!`    | Falta número                      |
+| `Password1`    | Falta símbolo especial            |
+| `Pass1!`       | Menos de 8 caracteres             |
+
+> 🧠 Consejo: usa una contraseña que combines palabras y números con algún símbolo para mantener tu cuenta segura.
+
+---
 ## 📥 Descargas
 
 | Plataforma      | Enlace de descarga                                                                                             |
